@@ -134,7 +134,7 @@ def handle_addfavorites(id):
     db.session.add(favorites)
     db.session.commit()
     response_body = {
-        "results": "Favourite was successfully added"
+        "results": "Favorite was successfully added"
     }
     return jsonify(response_body), 200
 
@@ -142,13 +142,13 @@ def handle_addfavorites(id):
 def handle_favPeople(people_id, user_id):
     people = Favorites.query.filter_by(characters_id=people_id).filter_by(user_id=user_id)
     if people:
-        return jsonify({"result": "favourite already exist"})
+        return jsonify({"result": "favorite already exist"})
     else:
         favPeople = Favorites(user_id=user_id, characters_id=people_id)
         db.session.add(favPeople)
         db.session.commit()
         response_body = {
-            "results": "Favourite added"
+            "results": "Favorite added"
         }
         return jsonify(response_body), 200
 
@@ -156,49 +156,49 @@ def handle_favPeople(people_id, user_id):
 def handle_favPlanet(planet_id, user_id):
     planet = Favorites.query.filter_by(planets_id=planet_id).filter_by(user_id=user_id)
     if planet:
-        return jsonify({"result": "favourite already exist"})
+        return jsonify({"result": "favorite already exist"})
     else:
         favPlanet = Favorites(user_id=user_id, planets_id=planet_id)
         db.session.add(favPlanet)
         db.session.commit()
         response_body = {
-            "results": "Favourite added"
+            "results": "Favorite added"
         }
         return jsonify(response_body), 200
 
 @app.route('/user/<int:user_id>/favorites/people/<int:people_id>', methods=['DELETE'])
 def handle_deletePeople(people_id, user_id):
-    favourite = Favorites.query.filter_by(user_id=user_id).filter_by(characters_id=people_id).first()
+    favorite = Favorites.query.filter_by(user_id=user_id).filter_by(characters_id=people_id).first()
     if Favorites:
-        db.session.delete(favourite)
+        db.session.delete(favorite)
         db.session.commit()
         response_body = {
-            "results": "Favourite was removed"
+            "results": "Favorite was removed"
         }
         return jsonify(response_body), 200
     else:
-        return jsonify({"result": "favourite not found"})
+        return jsonify({"result": "favorite not found"})
 
 @app.route('/user/<int:user_id>/favorites/planet/<int:planet_id>', methods=['DELETE'])
 def handle_deletePlanet(planet_id, user_id):
-    favourite = Favorites.query.filter_by(user_id=user_id).filter_by(planets_id=planet_id).first()
+    favorite = Favorites.query.filter_by(user_id=user_id).filter_by(planets_id=planet_id).first()
     if Favorites:
-        db.session.delete(favourite)
+        db.session.delete(favorite)
         db.session.commit()
         response_body = {
-            "results": "Favourite was removed"
+            "results": "Favorite was removed"
         }
         return jsonify(response_body), 200
     else:
-        return jsonify({"result": "favourite not found"})
+        return jsonify({"result": "favorite not found"})
 
 @app.route('/user/<int:id>/favorites/<int:user_id>', methods=['DELETE'])
 def handle_(id, user_id):
-    favourite = Favorites.query.filter_by(id=user_id).all()
-    db.session.delete(favourite[1])
+    favorite = Favorites.query.filter_by(id=user_id).all()
+    db.session.delete(favorite[1])
     db.session.commit()
     response_body = {
-        "results": "Favourite was removed"
+        "results": "Favorite was removed"
     }
     return jsonify(response_body), 200
 
