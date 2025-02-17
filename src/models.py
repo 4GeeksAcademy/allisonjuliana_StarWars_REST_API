@@ -76,3 +76,4 @@ class Favorites(db.Model):
             "characters_id": self.characters_id,
             "planets_id": self.planets_id,
         }
+    
