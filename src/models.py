@@ -8,6 +8,7 @@ class User(db.Model):
     name = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
+    favorites = db.relationship('Favorites', backref='user', lazy=True)
 
     def __repr__(self):
         return f'{self.name}'
@@ -64,7 +65,7 @@ class Favorites(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     characters_id = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=True)
     planets_id = db.Column(db.Integer, db.ForeignKey('planets.id'), nullable=True)
-    user = db.relationship('User', backref='Favorites', lazy=True)
+    # user = db.relationship('User', backref='Favorites', lazy=True)
 
     def __repr__(self):
         return f'{self.user.name}'
