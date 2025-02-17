@@ -1,6 +1,3 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
 import os
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
@@ -10,7 +7,6 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, Planets, Characters, Favorites
 import json
-#from models import Person
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -27,12 +23,10 @@ db.init_app(app)
 CORS(app)
 setup_admin(app)
 
-# Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
-# generate sitemap with all your endpoints
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)
@@ -109,21 +103,21 @@ def handle_singlefavorites(id):
     }
     return jsonify(response_body), 200
 
-@app.route('/user/favorites/<int:id>', methods=['GET'])
-def handle_singleuserfavorites(id):
-    favorites_id = User.query.get(id)
-    favorites = favorites_id.serialize()
-    response_body = {
-        "results": favorites
-    }
-    return jsonify(response_body), 200
-
 @app.route('/users/favorites', methods=['GET'])
 def handle_singleallfavorites():
     favorites = User.query.all()
     allfavorites = list(map(lambda favorites: favorites.serialize(), favorites))
     response_body = {
         "results": allfavorites
+    }
+    return jsonify(response_body), 200
+
+@app.route('/user/favorites/<int:id>', methods=['GET'])
+def handle_singleuserfavorites(id):
+    favorites_id = User.query.get(id)
+    favorites = favorites_id.serialize()
+    response_body = {
+        "results": favorites
     }
     return jsonify(response_body), 200
 
@@ -138,18 +132,16 @@ def handle_addfavorites(id):
     }
     return jsonify(response_body), 200
 
-@app.route('/user/<int:user_id>/favorites/people/<int:people_id>', methods=['POST'])
-def handle_favPeople(people_id, user_id):
-    people = Favorites.query.filter_by(characters_id=people_id).filter_by(user_id=user_id)
-    if people:
-        return jsonify({"result": "favorite already exist"})
+@app.route('/user/<int:user_id>/favorites/characters/<int:character_id>', methods=['POST'])
+def handle_favCharacter(character_id, user_id):
+    character = Favorites.query.filter_by(characters_id=character_id).filter_by(user_id=user_id)
+    if character:
+        return jsonify({"result": "favorite already exists"})
     else:
-        favPeople = Favorites(user_id=user_id, characters_id=people_id)
-        db.session.add(favPeople)
+        favCharacter = Favorites(user_id=user_id, characters_id=character_id)
+        db.session.add(favCharacter)
         db.session.commit()
-        response_body = {
-            "results": "Favorite added"
-        }
+        response_body = {"results": "Favorite added"}
         return jsonify(response_body), 200
 
 @app.route('/user/<int:user_id>/favorites/planet/<int:planet_id>', methods=['POST'])
@@ -166,18 +158,17 @@ def handle_favPlanet(planet_id, user_id):
         }
         return jsonify(response_body), 200
 
-@app.route('/user/<int:user_id>/favorites/people/<int:people_id>', methods=['DELETE'])
-def handle_deletePeople(people_id, user_id):
-    favorite = Favorites.query.filter_by(user_id=user_id).filter_by(characters_id=people_id).first()
-    if Favorites:
+@app.route('/user/<int:user_id>/favorites/characters/<int:character_id>', methods=['DELETE'])
+def handle_deleteCharacter(character_id, user_id):
+    favorite = Favorites.query.filter_by(user_id=user_id).filter_by(characters_id=character_id).first()
+    if favorite:
         db.session.delete(favorite)
         db.session.commit()
-        response_body = {
-            "results": "Favorite was removed"
-        }
+        response_body = {"results": "Favorite was removed"}
         return jsonify(response_body), 200
     else:
         return jsonify({"result": "favorite not found"})
+
 
 @app.route('/user/<int:user_id>/favorites/planet/<int:planet_id>', methods=['DELETE'])
 def handle_deletePlanet(planet_id, user_id):
@@ -202,7 +193,6 @@ def handle_(id, user_id):
     }
     return jsonify(response_body), 200
 
-# this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=False)
