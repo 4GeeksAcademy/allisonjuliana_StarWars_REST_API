@@ -134,7 +134,7 @@ def handle_addfavorites(id):
 
 @app.route('/user/<int:user_id>/favorites/characters/<int:character_id>', methods=['POST'])
 def handle_favCharacter(character_id, user_id):
-    character = Favorites.query.filter_by(characters_id=character_id).filter_by(user_id=user_id)
+    character = Favorites.query.filter_by(characters_id=character_id, user_id=user_id).first()
     if character:
         return jsonify({"result": "favorite already exists"})
     else:
@@ -146,7 +146,7 @@ def handle_favCharacter(character_id, user_id):
 
 @app.route('/user/<int:user_id>/favorites/planet/<int:planet_id>', methods=['POST'])
 def handle_favPlanet(planet_id, user_id):
-    planet = Favorites.query.filter_by(planets_id=planet_id).filter_by(user_id=user_id)
+    planet = Favorites.query.filter_by(planets_id=planet_id, user_id=user_id).first()
     if planet:
         return jsonify({"result": "favorite already exist"})
     else:

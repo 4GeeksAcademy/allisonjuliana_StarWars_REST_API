@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -20,6 +21,7 @@ class User(db.Model):
             "email": self.email,
             "favorites": list(map(lambda favorites: favorites.serialize(), self.favorites))
         }
+
 
 class Characters(db.Model):
     __tablename__ = 'characters'
@@ -40,6 +42,7 @@ class Characters(db.Model):
             "height": self.height,
         }
 
+
 class Planets(db.Model):
     __tablename__ = 'planets'
     id = db.Column(db.Integer, primary_key=True)
@@ -58,6 +61,7 @@ class Planets(db.Model):
             "population": self.population,
             "terrain": self.terrain,
         }
+    
 
 class Favorites(db.Model):
     __tablename__ = 'favorites'
@@ -65,10 +69,9 @@ class Favorites(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     characters_id = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=True)
     planets_id = db.Column(db.Integer, db.ForeignKey('planets.id'), nullable=True)
-    # user = db.relationship('User', backref='Favorites', lazy=True)
 
     def __repr__(self):
-        return f'{self.user.name}'
+        return f'Favorito {self.id}'
 
     def serialize(self):
         return {
@@ -77,4 +80,3 @@ class Favorites(db.Model):
             "characters_id": self.characters_id,
             "planets_id": self.planets_id,
         }
-    
